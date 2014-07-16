@@ -7,5 +7,10 @@
 (def ^:private loss-functions {:least-squares least-squares-function})
 
 (defn gradient-descent
-  [& {:keys [loss-function alpha iterations]
-      :or   {loss-function :least-squares alpha 0.0001 iterations 10}}])
+  [X y & {:keys [loss-function alpha iterations]
+      :or   {loss-function :least-squares alpha 0.0001 iterations 10}}]
+  (loop [theta (vec (repeat (count (first X)) 0))
+         [i & is] (range iterations)]
+    (if (nil? i)
+      theta
+      (recur theta is))))
