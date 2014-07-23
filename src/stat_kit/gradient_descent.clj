@@ -4,7 +4,11 @@
 (defn- least-squares-function [X y theta]
   (apply + (mapv (fn [x y] (expt (- (apply + (mapv * x theta)) y) 2)) X y)))
 
-(def ^:private loss-functions {:least-squares least-squares-function})
+(defn- least-squares-partial [x y' y N]
+  (* (/ 2 N)) (apply + (* x (- y y'))))
+
+(def ^:private loss-functions {:least-squares {:cost-function least-squares-function
+                                               :partial-derivative least-squares-partial}})
 
 (defn gradient-descent
   [X y & {:keys [loss-function alpha iterations]
