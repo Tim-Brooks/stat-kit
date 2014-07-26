@@ -1,4 +1,6 @@
-(ns stat-kit.linear-models)
+(ns stat-kit.linear-models
+  (:require [stat-kit.gradient-descent :as descent]
+            [clojure.core.matrix :as m]))
 
 (defn- x-and-y-row-dimensions-match [X y]
   (let [x-rows (count X)
@@ -25,7 +27,14 @@
   (x-and-y-row-dimensions-match X y)
   (x-must-be-matrix X))
 
-(defn linear-regression [X y]
+(defn- center-data [X y])
+
+(defn linear-regression
+  [X y & options]
   (validate-data X y)
-  (let [theta (vec (repeat (count X) 1))]
-    ))
+  (let [X-with-bias (->> X
+                         m/transpose
+                         (m/join (m/broadcast 1 [1 (first (m/shape X))]))
+                         m/transpose)]
+    (let [XT (m/transpose X-with-bias)]
+      (m/mmul (m/inverse (m/mmul XT X-with-bias)) XT y))))
